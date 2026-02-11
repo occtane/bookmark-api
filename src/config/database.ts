@@ -20,4 +20,4 @@ export const testConnection = async (): Promise<void> => {
   }
 };
 
-export default Pool;
+export default pool;
