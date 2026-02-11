@@ -1,6 +1,7 @@
 import express, { Application, Request, Response } from "express";
 import dotenv from "dotenv";
 import { testConnection } from "./config/database";
+import bookmarkRoutes from "./routes/bookmarkRoutes";
 
 // Load environment variables
 dotenv.config();
@@ -15,6 +16,9 @@ app.use(express.json()); // JSON Body-Parser
 app.get("/health", (req: Request, res: Response) => {
   res.json({ status: "OK", message: "Server is running!" });
 });
+
+// API routes
+app.use("/api/bookmarks", bookmarkRoutes);
 
 // Start server
 const startServer = async () => {

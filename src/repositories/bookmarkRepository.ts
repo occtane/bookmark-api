@@ -47,12 +47,10 @@ export const bookmarkRepository = {
       fields.push(`url = $${paramCount++}`);
       values.push(data.url);
     }
-
     if (data.title !== undefined) {
       fields.push(`title = $${paramCount++}`);
       values.push(data.title);
     }
-
     if (data.description !== undefined) {
       fields.push(`description = $${paramCount++}`);
       values.push(data.description);
@@ -67,6 +65,7 @@ export const bookmarkRepository = {
       `UPDATE bookmarks SET ${fields.join(", ")} WHERE id = $${paramCount} RETURNING *`,
       values,
     );
+    return result.rows[0] || null;
   },
 
   // Delete bookmark
