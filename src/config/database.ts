@@ -8,6 +8,7 @@ const pool = new Pool({
 });
 
 // Test function if connection is established
+// <void> - Generic type; returns a promise without a type
 export const testConnection = async (): Promise<void> => {
   try {
     const client = await pool.connect();
