@@ -36,6 +36,12 @@ export const authService = {
       throw new Error("Invalid credentials");
     }
 
+    // Verify password
+    const isValidPassword = await comparePassword(data.password, user.password_hash);
+    if (!isValidPassword) {
+      throw new Error("Invalid credentials");
+    }
+
     // Generate Token
     const token = generateToken(user.id);
 
