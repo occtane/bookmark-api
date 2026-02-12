@@ -2,6 +2,7 @@ import express, { Application, Request, Response } from "express";
 import dotenv from "dotenv";
 import { testConnection } from "./config/database";
 import bookmarkRoutes from "./routes/bookmarkRoutes";
+import authRoutes from "./routes/authRoutes";
 
 // Load environment variables
 dotenv.config();
@@ -19,6 +20,7 @@ app.get("/health", (req: Request, res: Response) => {
 
 // API routes
 app.use("/api/bookmarks", bookmarkRoutes);
+app.use("/api/auth", authRoutes);
 
 // Start server
 const startServer = async () => {
