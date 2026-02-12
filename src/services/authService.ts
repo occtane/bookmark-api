@@ -37,7 +37,10 @@ export const authService = {
     }
 
     // Verify password
-    const isValidPassword = await comparePassword(data.password, user.password_hash);
+    const isValidPassword = await comparePassword(
+      data.password,
+      user.password_hash,
+    );
     if (!isValidPassword) {
       throw new Error("Invalid credentials");
     }
