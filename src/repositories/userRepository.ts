@@ -1,5 +1,5 @@
 import pool from "../config/database";
-import { User, RegisterDTO, UserResponse } from "../models/Users";
+import { User, RegisterDTO, UserResponse } from "../models/User";
 
 export const userRepository = {
   // Find User by email

@@ -1,5 +1,5 @@
 import { userRepository } from "../repositories/userRepository";
-import { RegisterDTO, LoginDTO, AuthResponse } from "../models/Users";
+import { RegisterDTO, LoginDTO, AuthResponse } from "../models/User";
 import { hashPassword, comparePassword, generateToken } from "../utils/auth";
 
 export const authService = {
