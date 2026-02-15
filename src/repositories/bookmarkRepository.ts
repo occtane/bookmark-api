@@ -6,38 +6,43 @@ import {
 } from "../models/Bookmark";
 
 export const bookmarkRepository = {
-  // Gather all bookmarks
-  findAll: async (): Promise<Bookmark[]> => {
+  // Gather all bookmarks from user
+  findAll: async (userId: number): Promise<Bookmark[]> => {
     const result = await pool.query(
-      "SELECT * FROM bookmarks ORDER BY created_at DESC",
+      "SELECT * FROM bookmarks WHERE user_id = $1 ORDER BY created_at DESC",
+      [userId],
     );
-
     return result.rows;
   },
 
-  // Get one bookmark each ID
-  findById: async (id: number): Promise<Bookmark | null> => {
-    const result = await pool.query("SELECT * FROM bookmarks WHERE id = $1", [
-      id,
-    ]);
+  // Get each bookmark from ID only if its from the user
+  findById: async (id: number, userId: number): Promise<Bookmark | null> => {
+    const result = await pool.query(
+      "SELECT * FROM bookmarks WHERE id = $1 AND user_id = $2",
+      [id, userId],
+    );
     return result.rows[0] || null;
   },
 
-  // Create Bookmark
-  create: async (data: CreateBookmarkDTO): Promise<Bookmark> => {
+  // Create bookmark with userId
+  create: async (
+    data: CreateBookmarkDTO,
+    userId: number,
+  ): Promise<Bookmark> => {
     const result = await pool.query(
-      `INSERT INTO bookmarks (url, title, description)
-        VALUES ($1, $2, $3)
-        RETURNING *`,
-      [data.url, data.title, data.description || null],
+      `INSERT INTO bookmarks (url, title, description, user_id) 
+       VALUES ($1, $2, $3, $4) 
+       RETURNING *`,
+      [data.url, data.title, data.description || null, userId],
     );
     return result.rows[0];
   },
 
-  // Update bookmarks
+  // Update bookmarks only if its from user
   update: async (
     id: number,
     data: UpdateBookmarkDTO,
+    userId: number,
   ): Promise<Bookmark | null> => {
     const fields: string[] = [];
     const values: any[] = [];
@@ -60,19 +65,24 @@ export const bookmarkRepository = {
 
     fields.push(`updated_at = CURRENT_TIMESTAMP`);
     values.push(id);
+    values.push(userId);
 
     const result = await pool.query(
-      `UPDATE bookmarks SET ${fields.join(", ")} WHERE id = $${paramCount} RETURNING *`,
+      `UPDATE bookmarks 
+       SET ${fields.join(", ")} 
+       WHERE id = $${paramCount} AND user_id = $${paramCount + 1} 
+       RETURNING *`,
       values,
     );
     return result.rows[0] || null;
   },
 
-  // Delete bookmark
-  delete: async (id: number): Promise<boolean> => {
-    const result = await pool.query("DELETE FROM bookmarks WHERE id = $1", [
-      id,
-    ]);
+  // Only delete Bookmarks if its from user
+  delete: async (id: number, userId: number): Promise<boolean> => {
+    const result = await pool.query(
+      "DELETE FROM bookmarks WHERE id = $1 AND user_id = $2",
+      [id, userId],
+    );
     return result.rowCount !== null && result.rowCount > 0;
   },
 };
