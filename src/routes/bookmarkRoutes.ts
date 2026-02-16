@@ -1,7 +1,11 @@
 import { Router } from "express";
 import { bookmarkController } from "../controllers/bookmarkController";
+import { authMiddleware } from "../middleware/auth";
 
 const router = Router();
+
+// All routes are now protected
+router.use(authMiddleware);
 
 // GET /api/bookmarks
 router.get("/", bookmarkController.getAll);
