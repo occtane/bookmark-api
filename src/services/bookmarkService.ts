@@ -6,8 +6,7 @@ import {
 } from "../models/Bookmark";
 
 export const bookmarkService = {
-  // Gather all bookmarks
-  getAllBookmarks: async (): Promise<Bookmark[]> => {
+  getAllBookmarks: async (userId: number): Promise<Bookmark[]> => {
     // TODO: [Feature] Add pagination
     //   - Limit results per page (e.g., 50 bookmarks)
     //   - Accept page number as parameter
@@ -17,16 +16,20 @@ export const bookmarkService = {
     //   - Search by title or URL
     //   - Filter by date range
 
-    return await bookmarkRepository.findAll();
+    return await bookmarkRepository.findAll(userId);
   },
 
-  // get bookmark by ID
-  getBookmarkById: async (id: number): Promise<Bookmark | null> => {
-    return await bookmarkRepository.findById(id);
+  getBookmarkById: async (
+    id: number,
+    userId: number,
+  ): Promise<Bookmark | null> => {
+    return await bookmarkRepository.findById(id, userId);
   },
 
-  // Create new bookmark
-  createBookmark: async (data: CreateBookmarkDTO): Promise<Bookmark> => {
+  createBookmark: async (
+    data: CreateBookmarkDTO,
+    userId: number,
+  ): Promise<Bookmark> => {
     // TODO: [Validation] URL format validation
     //   - Check if URL is valid (https://, http://)
     //   - Use validator library or regex
@@ -45,34 +48,32 @@ export const bookmarkService = {
     //   - Prevent same URL being bookmarked twice
     //   - Maybe allow if in different collections (Phase 2)
 
-    return await bookmarkRepository.create(data);
+    return await bookmarkRepository.create(data, userId);
   },
 
-  // Update bookmark
   updateBookmark: async (
     id: number,
     data: UpdateBookmarkDTO,
+    userId: number,
   ): Promise<Bookmark | null> => {
     // TODO: [Validation] Same validations as create
     //   - URL format if URL is being updated
     //   - Input sanitization
 
-    // Check if bookmark exists
-    const existing = await bookmarkRepository.findById(id);
+    const existing = await bookmarkRepository.findById(id, userId);
     if (!existing) {
       return null;
     }
 
-    return await bookmarkRepository.update(id, data);
+    return await bookmarkRepository.update(id, data, userId);
   },
 
-  // Delete bookmark
-  deleteBookmark: async (id: number): Promise<boolean> => {
+  deleteBookmark: async (id: number, userId: number): Promise<boolean> => {
     // TODO: [Feature] Soft delete instead of hard delete
     //   - Add 'deleted_at' column to DB
     //   - Mark as deleted instead of removing
     //   - Allow restore functionality
 
-    return await bookmarkRepository.delete(id);
+    return await bookmarkRepository.delete(id, userId);
   },
 };
